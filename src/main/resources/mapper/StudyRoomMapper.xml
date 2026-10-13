@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.glasspark.studyspot.studyrooms.mapper.StudyRoomMapper">
+
+    <insert id="insertStudyRoom" parameterType="com.glasspark.studyspot.studyrooms.domain.StudyRoom"
+            useGeneratedKeys="true" keyProperty="studyRoomId" keyColumn="study_room_id">
+
+        INSERT INTO study_rooms (
+        name,
+        address,
+        capacity,
+        open_time,
+        close_time,
+        status
+        )
+        VALUES (
+        #{name},
+        #{address},
+        #{capacity},
+        #{openTime},
+        #{closeTime},
+        #{status}
+        )
+    </insert>
+
+    <select id="countByAddressAndName" resultType="int">
+        SELECT COUNT(*)
+        FROM study_rooms
+        WHERE address = #{address}
+          AND name = #{name}
+    </select>
+
+    <!-- 목록(findAll)과 전체 건수(count)가 같은 필터를 쓰도록 한 곳에 둔다 -->
+    <sql id="searchCondition">
+        <if test="keyword != null and keyword != ''">
+            AND (name LIKE CONCAT('%', #{keyword}, '%') OR address LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="minCapacity != null">
+            AND capacity &gt;= #{minCapacity}
+        </if>
+    </sql>
+
+    <select id="findAll" parameterType="com.glasspark.studyspot.studyrooms.dto.StudyRoomSearchRequest"
+            resultType="com.glasspark.studyspot.studyrooms.domain.StudyRoom">
+        SELECT study_room_id, name, address, capacity, open_time, close_time, status
+        FROM study_rooms
+        WHERE status = 'ACTIVE'
+        <include refid="searchCondition"/>
+        ORDER BY study_room_id DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="count" parameterType="com.glasspark.studyspot.studyrooms.dto.StudyRoomSearchRequest"
+            resultType="long">
+        SELECT COUNT(*)
+        FROM study_rooms
+        WHERE status = 'ACTIVE'
+        <include refid="searchCondition"/>
+    </select>
+
+    <select id="findById" resultType="com.glasspark.studyspot.studyrooms.domain.StudyRoom">
+        SELECT study_room_id, name, address, capacity, open_time, close_time, status
+        FROM study_rooms
+        WHERE study_room_id = #{studyRoomId}
+    </select>
+
+    <!--
+        예약 처리용 룸 행 락. 상태(status)로 거르지 않고 그대로 돌려줘서
+        서비스가 '없는 룸'과 '예약 불가 상태'를 구분할 수 있게 한다.
+        룸 존재 확인/상태/운영시간을 이 한 번의 락 읽기로 해결하므로
+        락 앞에 별도의 일반 SELECT(findById 등)를 두지 않는다. (스냅샷 고정 방지)
+    -->
+    <select id="lockById" resultType="com.glasspark.studyspot.studyrooms.domain.StudyRoom">
+        SELECT study_room_id, name, address, capacity, open_time, close_time, status
+        FROM study_rooms
+        WHERE study_room_id = #{studyRoomId}
+        FOR UPDATE
+    </select>
+
+</mapper>

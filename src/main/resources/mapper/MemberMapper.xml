@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.glasspark.studyspot.members.mapper.MemberMapper">
+
+    <select id="findActiveByEmail"
+            parameterType="string"
+            resultType="com.glasspark.studyspot.members.domain.Member">
+        SELECT
+        member_id,
+        username,
+        email,
+        password,
+        nickname,
+        role,
+        status
+        FROM members
+        WHERE email = #{email}
+        AND status = 'ACTIVE'
+    </select>
+
+    <select id="findByUsername"
+            parameterType="string"
+            resultType="com.glasspark.studyspot.members.domain.Member">
+        SELECT
+        member_id,
+        username,
+        email,
+        password,
+        nickname,
+        role,
+        status
+        FROM members
+        WHERE username = #{username}
+        AND status = 'ACTIVE'
+    </select>
+    <select id="countByUsername" resultType="int">
+        SELECT COUNT(*)
+        FROM members
+        WHERE username = #{username}
+    </select>
+
+    <select id="countByEmail" resultType="int">
+        SELECT COUNT(*)
+        FROM members
+        WHERE email = #{email}
+    </select>
+
+    <select id="countByNickname" resultType="int">
+        SELECT COUNT(*)
+        FROM members
+        WHERE nickname = #{nickname}
+    </select>
+
+    <insert id="insert" parameterType="com.glasspark.studyspot.members.domain.Member"
+            useGeneratedKeys="true" keyProperty="memberId" keyColumn="member_id">
+        INSERT INTO members (username, email, password, nickname, role, status)
+        VALUES (#{username}, #{email}, #{password}, #{nickname}, #{role}, #{status})
+    </insert>
+
+    <update id="withdrawMember">
+        UPDATE members
+        SET status = 'WITHDRAWN'
+        WHERE member_id = #{memberId}
+        AND status = 'ACTIVE'
+    </update>
+
+
+</mapper>

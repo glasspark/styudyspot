@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title>StudySpot</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <h1>StudySpot</h1>
+
+    <p sec:authorize="isAuthenticated()">
+        <span sec:authentication="principal.nickname"></span>님 환영합니다
+    </p>
+</main>
+</body>
+</html>

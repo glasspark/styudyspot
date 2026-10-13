@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 최종 제목: "회원가입 | StudySpot" -> 아래 주석 해제 시 -->
+   <!-- <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">StudySpot</title>-->
+    <title layout:title-pattern="$LAYOUT_TITLE">StudySpot</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+
+<main layout:fragment="content"></main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<script th:src="@{/js/lib/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/common/common.js}"></script>
+<th:block layout:fragment="scripts"></th:block>
+</body>
+</html>

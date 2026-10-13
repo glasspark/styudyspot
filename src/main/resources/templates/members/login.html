@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudySpot 로그인</title>
+</head>
+<body>
+<main>
+    <h1>StudySpot</h1>
+    <h2>로그인</h2>
+
+    <p th:if="${param.error}" role="alert">아이디 또는 비밀번호가 올바르지 않습니다.</p>
+    <p th:if="${param.logout}">로그아웃되었습니다.</p>
+    <p th:if="${param.joined}">회원가입이 완료되었습니다. 로그인해 주세요.</p>
+
+    <form th:action="@{/loginProc}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+        <div>
+            <label for="username">아이디</label>
+            <input id="username" name="username" type="text" autocomplete="username" required autofocus>
+        </div>
+
+        <div>
+            <label for="password">비밀번호</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" required>
+        </div>
+
+        <button type="submit">로그인</button>
+    </form>
+
+    <a th:href="@{/members/join}" class="btn">회원가입</a>
+</main>
+</body>
+</html>

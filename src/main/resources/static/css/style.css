@@ -1,0 +1,27 @@
+/* StudySpot 기본 스타일 (최소한만) */
+body { font-family: sans-serif; max-width: 960px; margin: 0 auto; padding: 0 16px; line-height: 1.5; color: #222; }
+header { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #ddd; }
+header > a { font-weight: bold; font-size: 1.2em; text-decoration: none; color: inherit; }
+nav { display: flex; align-items: center; gap: 12px; }
+nav > div { display: flex; align-items: center; gap: 12px; }
+nav form { display: inline; }
+main { padding: 16px 0; min-height: 60vh; }
+footer { padding: 12px 0; border-top: 1px solid #ddd; color: #777; font-size: .9em; }
+
+table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+th, td { border-bottom: 1px solid #ddd; padding: 8px; text-align: left; }
+th { background: #f6f6f6; }
+button { cursor: pointer; padding: 6px 12px; }
+input { padding: 6px; }
+label { display: inline-block; min-width: 90px; }
+.form-row { margin: 8px 0; }
+.search { margin: 12px 0; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.msg { margin: 8px 0; min-height: 1.4em; }
+.error { color: #c0392b; }
+.success { color: #2e7d32; }
+.hint { color: #777; font-size: .85em; }
+.empty { color: #777; text-align: center; padding: 24px; }
+.pagination { display: flex; gap: 4px; justify-content: center; margin: 16px 0; }
+.pagination button[disabled] { font-weight: bold; background: #eee; cursor: default; }
+.badge { padding: 2px 8px; border-radius: 10px; background: #eee; font-size: .85em; }
+.badge.cancelled { background: #fde8e8; color: #c0392b; }

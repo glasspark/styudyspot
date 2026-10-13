@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+    <title>스터디룸 상세</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div id="detail" th:attr="data-room-id=${studyRoomId}">
+        <p><a th:href="@{/studyrooms}">← 목록으로</a></p>
+
+        <h1 id="roomName">스터디룸</h1>
+        <p id="roomMessage" class="msg"></p>
+
+        <table id="roomInfo" hidden>
+            <tr><th>주소</th><td id="roomAddress"></td></tr>
+            <tr><th>수용 인원</th><td id="roomCapacity"></td></tr>
+            <tr><th>운영 시간</th><td id="roomHours"></td></tr>
+            <tr><th>상태</th><td id="roomStatus"></td></tr>
+        </table>
+
+        <section id="reserveSection" hidden>
+            <h2>예약하기</h2>
+            <form id="reserveForm">
+                <div class="form-row">
+                    <label for="reserverName">예약자 이름</label>
+                    <input type="text" id="reserverName" maxlength="50" required>
+                </div>
+                <div class="form-row">
+                    <label for="date">날짜</label>
+                    <input type="date" id="date" required>
+                </div>
+                <div class="form-row">
+                    <label for="startTime">시작 시간</label>
+                    <input type="time" id="startTime" required>
+                </div>
+                <div class="form-row">
+                    <label for="endTime">종료 시간</label>
+                    <input type="time" id="endTime" required>
+                </div>
+                <p class="hint">종료 시간이 시작 시간과 같거나 더 이르면 다음 날 그 시각까지로 계산됩니다. (야간, 24시간 운영 룸)</p>
+                <button type="submit" id="reserveButton">예약하기</button>
+                <p id="reserveMessage" class="msg"></p>
+            </form>
+        </section>
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/studyrooms/detail.js}"></script>
+</th:block>
+</body>
+</html>

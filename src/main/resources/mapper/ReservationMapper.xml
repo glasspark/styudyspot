@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.glasspark.studyspot.reservations.mapper.ReservationMapper">
+
+    <insert id="insert" parameterType="com.glasspark.studyspot.reservations.domain.Reservation"
+            useGeneratedKeys="true" keyProperty="reservationId" keyColumn="reservation_id">
+        INSERT INTO reservations (study_room_id, member_id, reserver_name, start_at, end_at, status)
+        VALUES (#{studyRoomId}, #{memberId}, #{reserverName}, #{startAt}, #{endAt}, #{status});
+    </insert>
+
+    <!--
+        같은 룸에서 [startAt, endAt) 과 시간이 겹치는 '확정' 예약의 개수.
+        겹침 조건: 기존.start_at < 새.end_at AND 기존.end_at > 새.start_at
+        (XML 안에서 '<' 는 &lt; 로, '>' 는 &gt; 로 써야 한다)
+        ※ 반드시 룸 락(StudyRoomMapper.lockById)을 먼저 잡은 같은 트랜잭션 안에서 호출할 것.
+    -->
+    <select id="countOverlap" resultType="int">
+        SELECT COUNT(*)
+        FROM reservations
+        WHERE study_room_id = #{studyRoomId}
+          AND status = 'CONFIRMED'
+          AND start_at &lt; #{endAt}
+          AND end_at &gt; #{startAt}
+    </select>
+
+    <update id="cancel">
+        UPDATE reservations
+        SET status = 'CANCELLED'
+        WHERE reservation_id = #{reservationId}
+        AND member_id = #{memberId}
+        AND status = 'CONFIRMED'
+    </update>
+
+    <!--
+        내 예약 목록. 취소된 예약도 상태와 함께 보여준다. (예약 시간 최신순)
+        인덱스 idx_reservations_member (member_id, start_at) 를 탄다.
+    -->
+    <select id="findByMemberId" resultType="com.glasspark.studyspot.reservations.dto.ReservationResponse">
+        SELECT r.reservation_id,
+               r.study_room_id,
+               s.name AS study_room_name,
+               r.reserver_name,
+               r.start_at,
+               r.end_at,
+               r.status
+        FROM reservations r
+        JOIN study_rooms s ON s.study_room_id = r.study_room_id
+        WHERE r.member_id = #{memberId}
+        ORDER BY r.start_at DESC, r.reservation_id DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="countByMemberId" resultType="long">
+        SELECT COUNT(*)
+        FROM reservations
+        WHERE member_id = #{memberId}
+    </select>
+
+</mapper>
