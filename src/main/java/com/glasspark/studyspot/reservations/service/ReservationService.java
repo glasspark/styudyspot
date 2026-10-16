@@ -2,6 +2,7 @@ package com.glasspark.studyspot.reservations.service;
 
 import com.glasspark.studyspot.common.*;
 import com.glasspark.studyspot.reservations.domain.Reservation;
+import com.glasspark.studyspot.reservations.domain.ReservationUnit;
 import com.glasspark.studyspot.reservations.dto.ReservationCreateRequest;
 import com.glasspark.studyspot.reservations.dto.ReservationResponse;
 import com.glasspark.studyspot.reservations.mapper.ReservationMapper;
@@ -27,6 +28,9 @@ public class ReservationService {
 
         // 예약 가능한지 확인(request 로 넘어온 시간에 대해서 시작 > 종료 와 같이 유효성 검사
         validateBasicTime(request.getStartAt(), request.getEndAt());
+
+        // 정해진 단위(30분/1시간, 시작은 정각·30분)인지 확인. DB 를 쓰지 않는 검증이라 락 앞에 두어도 안전하다.
+        validateReservationUnit(request.getStartAt(), request.getEndAt());
 
         // FOR UPDATE 로 첫 락
         // 룸 존재 / ACTIVE 여부 / 시간 규칙
@@ -54,6 +58,13 @@ public class ReservationService {
         }
     }
 
+    // 예약 시간 단위 확인. 시작은 정각·30분, 길이는 30분·1시간 (규칙은 ReservationUnit)
+    private void validateReservationUnit(LocalDateTime start, LocalDateTime end) {
+        if (!ReservationUnit.isValid(start, end)) {
+            throw new CustomException(ErrorCode.INVALID_RESERVATION_UNIT);
+        }
+    }
+
     // 해당 스터디룸의 운영 시간 확인
     // 야간 운영(날짜를 넘김), 24시간 운영 해석 규칙은 OperatingHours
     private void validateOperatingHours(StudyRoom room, LocalDateTime start, LocalDateTime end) {
@@ -70,7 +81,7 @@ public class ReservationService {
         return ApiResponse.ok();
     }
 
-    // 내 예약 목록 (페이징). page, size 범위 검증은 PageRequest 가 컨트롤러에서 이미 끝냈다.
+    // 내 예약 목록
     public ApiResponse<PageResponse<ReservationResponse>> getMyReservations(Long memberId, PageRequest pageRequest) {
         List<ReservationResponse> list =
                 reservationMapper.findByMemberId(memberId, pageRequest.getOffset(), pageRequest.getSize());

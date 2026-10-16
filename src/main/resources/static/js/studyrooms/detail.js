@@ -39,8 +39,7 @@ $(function () {
 
         const date = $('#date').val();
         const start = $('#startTime').val();
-        const end = $('#endTime').val();
-        const endDate = end <= start ? Common.addDays(date, 1) : date;
+        const end = Common.addMinutes(date, start, Number($('#duration').val()));   // 자정을 넘기면 날짜도 함께 넘어간다
 
         reserveMessage.text('').removeClass('error success');
         reserveButton.prop('disabled', true);   // 연속 클릭으로 두 번 예약되지 않게
@@ -54,7 +53,7 @@ $(function () {
                 studyRoomId: roomId,
                 reserverName: $('#reserverName').val().trim(),
                 startAt: date + 'T' + start + ':00',
-                endAt: endDate + 'T' + end + ':00'
+                endAt: end.date + 'T' + end.time + ':00'
             }),
             success: function () {
                 alert('예약이 완료되었습니다.');

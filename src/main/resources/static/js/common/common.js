@@ -73,6 +73,18 @@ const Common = {
         return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
     },
 
+    // "YYYY-MM-DD" 와 "HH:mm" 에 minutes 분을 더해 { date, time } 으로 돌려준다. 자정을 넘기면 날짜가 하루 넘어간다.
+    addMinutes: function (dateString, timeString, minutes) {
+        const pad = function (n) { return String(n).padStart(2, '0'); };
+        const d = dateString.split('-').map(Number);
+        const t = timeString.split(':').map(Number);
+        const result = new Date(d[0], d[1] - 1, d[2], t[0], t[1] + minutes);
+        return {
+            date: Common.toDateString(result),
+            time: pad(result.getHours()) + ':' + pad(result.getMinutes())
+        };
+    },
+
     // "YYYY-MM-DD" 에 days 일을 더한다. (Date 의 시간대 변환을 피하려고 연, 월, 일을 직접 계산)
     addDays: function (dateString, days) {
         const parts = dateString.split('-').map(Number);

@@ -18,6 +18,7 @@ public enum ErrorCode {
     STUDY_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 스터디룸입니다."),
     STUDY_ROOM_NOT_AVAILABLE(HttpStatus.CONFLICT, "현재 예약할 수 없는 스터디룸입니다."),
     INVALID_RESERVATION_TIME(HttpStatus.BAD_REQUEST, "예약 시간이 올바르지 않습니다."),
+    INVALID_RESERVATION_UNIT(HttpStatus.BAD_REQUEST, "예약은 정각 또는 30분에 시작해서 30분이나 1시간 단위로만 할 수 있습니다."),
     RESERVATION_TIME_CONFLICT(HttpStatus.CONFLICT, "이미 예약된 시간대입니다."),
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 예약입니다.");
 
